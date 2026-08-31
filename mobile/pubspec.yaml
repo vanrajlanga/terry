@@ -1,0 +1,22 @@
+name: terry_eclipso
+description: "Terry by eClipso - a 6 player, 2 team, 8-kat trick taking card game. Plays offline against bots."
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+# No third-party packages on purpose: the whole game runs on the device, so the
+# app needs no network permission and the build has nothing to resolve but the
+# Flutter SDK itself.
+flutter:
+  uses-material-design: true

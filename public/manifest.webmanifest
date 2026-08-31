@@ -1,0 +1,19 @@
+{
+  "name": "Terry by eClipso",
+  "short_name": "Terry",
+  "description": "A 6- or 4-player, 2-team card game.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#073d29",
+  "theme_color": "#0d5c3f",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

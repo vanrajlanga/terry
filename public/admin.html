@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Terry — admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="admin.css" />
+</head>
+<body class="admin-body">
+
+<section id="login" class="admin-login">
+  <div class="home-card">
+    <h1>Terry <span>admin</span></h1>
+    <p class="tagline">Sign in to see the games that have been played.</p>
+    <label class="field">
+      <span>Password</span>
+      <input id="pw" type="password" autocomplete="current-password" />
+    </label>
+    <button id="btn-login" class="primary">Sign in</button>
+    <p id="login-error" class="error"></p>
+  </div>
+</section>
+
+<section id="dash" class="admin-dash hidden">
+  <header class="admin-bar">
+    <h1>Terry <span>admin</span></h1>
+    <div class="admin-stats" id="stats"></div>
+    <div class="admin-actions">
+      <label class="admin-search">
+        <input id="search" placeholder="Search code or name" autocomplete="off" />
+      </label>
+      <button id="btn-refresh" class="ghost">Refresh</button>
+      <button id="btn-logout" class="ghost">Sign out</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-scroll">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Room</th>
+            <th>Created by</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th class="num">Players</th>
+            <th class="num">Deals</th>
+            <th class="num">Team A</th>
+            <th class="num">Team B</th>
+            <th>Status</th>
+            <th>Players at the table</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p id="empty" class="hint admin-empty hidden">No games recorded yet.</p>
+  </main>
+</section>
+
+<script src="admin.js"></script>
+</body>
+</html>

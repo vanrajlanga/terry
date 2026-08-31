@@ -1,0 +1,14 @@
+node_modules/
+npm-debug.log*
+.env
+
+# Runtime state written by the server - live rooms and finished-game history.
+# It contains real player names, and it is regenerated on the fly.
+.rooms.json
+.games.json
+
+.DS_Store
+Thumbs.db
+
+# Deploy script: holds the production host and SSH key path. Stays local.
+deploy.sh

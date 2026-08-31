@@ -1,0 +1,71 @@
+/* The admin dashboard. Shares the game's palette from style.css. */
+
+.admin-body { min-height: 100%; }
+.admin-login { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+.admin-login .home-card h1 { margin-bottom: 4px; }
+.admin-login .home-card h1 span { color: var(--gold); }
+.admin-login button { width: 100%; margin-top: 6px; }
+
+.admin-dash { display: flex; flex-direction: column; min-height: 100vh; }
+
+.admin-bar {
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  padding: 12px 20px; border-bottom: 1px solid var(--line);
+  background: rgba(0, 0, 0, .3);
+}
+.admin-bar h1 { margin: 0; font-size: 20px; font-weight: 700; }
+.admin-bar h1 span { color: var(--gold); }
+.admin-stats { display: flex; gap: 16px; font-size: 13px; opacity: .8; }
+.admin-stats b { color: #fff; font-size: 15px; }
+.admin-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.admin-search input { width: 220px; padding: 7px 12px; font-size: 13px; }
+
+.admin-main { flex: 1; padding: 16px 20px 28px; min-height: 0; }
+.admin-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 13px; background: rgba(0, 0, 0, .22); }
+.admin-table th {
+  text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em;
+  opacity: .6; font-weight: 600; padding: 10px 12px; white-space: nowrap;
+  background: rgba(0, 0, 0, .3); position: sticky; top: 0;
+}
+.admin-table td { padding: 10px 12px; border-top: 1px solid rgba(255, 255, 255, .07); vertical-align: middle; }
+.admin-table tr:hover td { background: rgba(255, 255, 255, .04); }
+.admin-table .num { text-align: right; white-space: nowrap; }
+.admin-table td small { opacity: .5; font-size: 11px; }
+.admin-table .code {
+  font-family: ui-monospace, Consolas, monospace; letter-spacing: .12em;
+  color: var(--gold); font-weight: 700; white-space: nowrap;
+}
+.admin-table .who { font-weight: 600; white-space: nowrap; }
+.admin-table .dim { opacity: .45; }
+.admin-table .plus { color: #7ee0a6; font-weight: 700; }
+.admin-table .minus { color: #ff9a8a; font-weight: 700; }
+
+.chip {
+  font-size: 11px; padding: 2px 9px; border-radius: 999px; white-space: nowrap;
+  background: rgba(255, 255, 255, .12);
+}
+.chip.playing { background: rgba(240, 193, 90, .22); color: var(--gold); font-weight: 700; }
+.chip.lobby { background: rgba(126, 224, 166, .18); color: #7ee0a6; }
+.chip.live { background: rgba(126, 224, 166, .18); color: #7ee0a6; }
+.chip.closed { opacity: .55; }
+
+.seats { display: flex; gap: 4px; flex-wrap: wrap; max-width: 380px; }
+.seat {
+  font-size: 11px; padding: 2px 8px; border-radius: 999px;
+  background: rgba(255, 255, 255, .08); white-space: nowrap;
+}
+.seat.a { border-left: 2px solid var(--team-a); }
+.seat.b { border-left: 2px solid var(--team-b); }
+.seat.bot { opacity: .65; }
+.seat.empty { opacity: .35; font-style: italic; }
+
+.admin-empty { text-align: center; padding: 30px 0; }
+
+@media (max-width: 720px) {
+  .admin-bar { padding: 10px 12px; gap: 10px; }
+  .admin-actions { width: 100%; margin-left: 0; }
+  .admin-search input { width: 100%; }
+  .admin-main { padding: 12px; }
+  .seats { max-width: 220px; }
+}

@@ -1,0 +1,30 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+
+# Generated platform folders - run `flutter create --platforms=android .`
+# to regenerate them locally (see README).
+android/
+ios/
+linux/
+macos/
+windows/
+web/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Signing - never commit these
+*.jks
+*.keystore
+key.properties

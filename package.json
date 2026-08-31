@@ -1,0 +1,19 @@
+{
+  "name": "terry-by-eclipso",
+  "version": "1.0.0",
+  "description": "Terry by eClipso - 6 player, 2 team, 8-kat trick taking card game",
+  "main": "server/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "test": "node test/rules.test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  }
+}

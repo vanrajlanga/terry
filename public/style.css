@@ -1,0 +1,871 @@
+:root {
+  --felt: #0d5c3f;
+  --felt-dark: #073d29;
+  --ink: #10241c;
+  --line: rgba(255, 255, 255, .16);
+  --gold: #f0c15a;
+  --team-a: #4fa8ff;
+  --team-b: #ff7a59;
+  --card-w: 62px;
+  --card-h: 88px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: #eef5f1;
+  background: radial-gradient(circle at 50% 18%, var(--felt) 0%, var(--felt-dark) 62%, #041d14 100%);
+}
+
+.screen { min-height: 100%; }
+.hidden { display: none !important; }
+button {
+  font: inherit;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .1);
+  color: #eef5f1;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+button:hover:not(:disabled) { background: rgba(255, 255, 255, .2); }
+button:active:not(:disabled) { transform: translateY(1px); }
+button:disabled { opacity: .4; cursor: not-allowed; }
+button.primary { background: var(--gold); border-color: #d9a83c; color: #2a1c00; font-weight: 700; }
+button.primary:hover:not(:disabled) { background: #ffd275; }
+button.ghost { padding: 6px 12px; font-size: 13px; }
+
+/* ---------------- home + lobby ---------------- */
+#screen-home, #screen-lobby { display: flex; align-items: center; justify-content: center; padding: 24px; }
+.home-card {
+  width: min(440px, 100%);
+  background: rgba(0, 0, 0, .28);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 28px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+}
+.home-card.wide { width: min(620px, 100%); }
+.home-card h1 { margin: 0 0 4px; font-size: 30px; letter-spacing: .5px; }
+.home-card h1 span { color: var(--gold); }
+.home-card h2 { margin: 0 0 4px; font-size: 24px; }
+.tagline { margin: 0 0 20px; opacity: .7; font-size: 14px; }
+.field { display: block; margin-bottom: 12px; }
+.field span { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; opacity: .65; margin-bottom: 5px; }
+input {
+  width: 100%;
+  font: inherit;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, .3);
+  color: #eef5f1;
+}
+input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+#input-code { text-transform: uppercase; letter-spacing: .3em; font-weight: 700; }
+#screen-home button { width: 100%; margin-top: 6px; }
+.divider { display: flex; align-items: center; gap: 10px; margin: 22px 0 14px; opacity: .5; font-size: 12px; }
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.error { color: #ff9a8a; min-height: 18px; font-size: 14px; margin: 10px 0 0; }
+.hint { opacity: .65; font-size: 13px; min-height: 18px; }
+.rules { margin-top: 18px; font-size: 13px; opacity: .85; }
+.rules summary { cursor: pointer; opacity: .8; }
+.rules ul { margin: 10px 0 0; padding-left: 18px; line-height: 1.6; }
+
+.code { font-family: ui-monospace, Consolas, monospace; letter-spacing: .25em; color: var(--gold); }
+.invite { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.invite input { font-size: 13px; flex: 1 1 200px; min-width: 0; }
+.invite button { flex: none; }
+.wa-btn {
+  background: #25d366; border-color: #1eb457; color: #06331a; font-weight: 700;
+}
+.wa-btn:hover:not(:disabled) { background: #3ae57c; }
+.wa-btn::before { content: "🟢 "; }
+.lobby-seats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.seat-chip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 12px;
+  border: 1px solid var(--line); background: rgba(0, 0, 0, .25);
+}
+.seat-chip .dot { width: 10px; height: 10px; border-radius: 50%; background: #666; flex: none; }
+.seat-chip.filled .dot { background: #56d68a; }
+.seat-chip.away .dot { background: #f0c15a; }
+.seat-chip.away .away-tag { color: var(--gold); font-weight: 700; }
+.seat-chip .who { font-weight: 600; }
+.seat-chip .role { font-size: 11px; opacity: .6; text-transform: uppercase; letter-spacing: .06em; }
+.seat-chip.a { border-left: 3px solid var(--team-a); }
+.seat-chip.b { border-left: 3px solid var(--team-b); }
+.seat-chip .grow { flex: 1; min-width: 0; }
+.seat-chip .rename-input {
+  width: 100%; padding: 4px 8px; font-size: 14px; font-weight: 600;
+  border-radius: 7px; margin-bottom: 2px;
+}
+.seat-chip button.ghost { flex: none; }
+.lobby-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.lobby-foot {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line);
+}
+#btn-change-game { margin-right: auto; }
+
+.difficulty { margin-bottom: 16px; }
+.diff-head {
+  font-size: 12px; text-transform: uppercase; letter-spacing: .08em;
+  opacity: .65; margin-bottom: 6px;
+}
+.diff-buttons { display: flex; gap: 8px; }
+.diff-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 8px 6px; font-size: 14px; font-weight: 700;
+}
+.diff-btn small { font-size: 10px; font-weight: 400; opacity: .6; }
+.diff-btn.on {
+  background: var(--gold); border-color: #d9a83c; color: #2a1c00;
+}
+.diff-btn.on small { opacity: .75; }
+.diff-btn:disabled { opacity: .55; }
+.diff-btn.on:disabled { opacity: .9; }
+
+/* ---------------- game ---------------- */
+/* The game screen is laid out at 1/zoom of the viewport and then scaled back
+   down to fill it exactly, so zooming out really does fit more on screen
+   instead of just shrinking pixels. Fixed positioning keeps the oversized
+   layout box from giving the page scrollbars, and `scale` is used rather than
+   `transform` so the your-turn shake can still animate transform on top. */
+#screen-game {
+  --zoom: 1;
+  position: fixed; top: 0; left: 0;
+  display: flex; flex-direction: column; overflow: hidden;
+  width: calc(100vw / var(--zoom));
+  height: calc(100vh / var(--zoom));
+  min-height: 0;   /* .screen's min-height:100% would pin it to the viewport */
+  transform-origin: top left;
+  scale: var(--zoom);
+}
+/* dvh tracks the real visible area once a phone's browser bars slide away */
+@supports (height: 100dvh) {
+  #screen-game { height: calc(100dvh / var(--zoom)); }
+}
+
+/* controls that only make sense on a phone */
+.m-only { display: none; }
+.zoom-controls { align-items: center; gap: 4px; }
+#zoom-level { font-size: 11px; opacity: .7; min-width: 34px; text-align: center; }
+/* Wraps to a second row rather than letting the chips overlap each other. */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; row-gap: 8px;
+  padding: 10px 16px; border-bottom: 1px solid var(--line);
+  background: rgba(0, 0, 0, .25);
+}
+.topbar > .score { flex: 0 1 auto; min-width: 0; }
+.topbar > .score > * { flex: none; }
+.topbar > .meta { flex: 0 0 auto; margin-left: auto; }
+.score .target {
+  min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+/* on a tight bar the call summary goes; the turn name must not */
+@media (max-width: 1080px) { .score .target { display: none; } }
+.score { display: flex; align-items: center; gap: 14px; }
+.score .team { display: flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; background: rgba(0, 0, 0, .3); }
+.score .team span { font-size: 20px; font-weight: 800; }
+.score .team .need {
+  font-style: normal; font-size: 12px; font-weight: 700; opacity: .75;
+  margin-left: -3px; white-space: nowrap;
+}
+.score .team.is-master { box-shadow: 0 0 0 1px var(--gold) inset; }
+.score .team.is-master .need { color: var(--gold); opacity: 1; }
+.team-a { border: 1px solid var(--team-a); }
+.team-a span { color: var(--team-a); }
+.team-b { border: 1px solid var(--team-b); }
+.team-b span { color: var(--team-b); }
+.score .target { font-size: 12px; opacity: .7; }
+.meta { display: flex; align-items: center; gap: 14px; font-size: 13px; opacity: .85; }
+
+/* who the table is waiting on, right now */
+/* never squeezed - the call summary beside it gives way instead */
+.turn-chip {
+  display: flex; align-items: center; gap: 9px; flex: none;
+  padding: 6px 16px; border-radius: 999px; font-size: 14px; white-space: nowrap;
+  border: 1px solid var(--line); background: rgba(0, 0, 0, .32);
+}
+.turn-chip .nm { font-weight: 800; }
+.turn-chip i { font-style: normal; opacity: .65; }
+.turn-chip .lead {
+  margin-left: 2px; padding: 0 6px; border-radius: 999px; font-size: 15px;
+  background: rgba(255, 255, 255, .14);
+}
+.turn-chip .lead.red { color: #ff8f80; }
+.turn-chip .dot {
+  width: 9px; height: 9px; border-radius: 50%; flex: none;
+  background: #9fb3aa; animation: turn-dot 1.5s ease-in-out infinite;
+}
+.turn-chip.team-a { border-color: rgba(79, 168, 255, .55); }
+.turn-chip.team-a .nm { color: var(--team-a); }
+.turn-chip.team-a .dot { background: var(--team-a); }
+.turn-chip.team-b { border-color: rgba(255, 122, 89, .55); }
+.turn-chip.team-b .nm { color: var(--team-b); }
+.turn-chip.team-b .dot { background: var(--team-b); }
+.turn-chip.yours {
+  border-color: var(--gold); background: rgba(240, 193, 90, .2);
+  box-shadow: 0 0 0 1px rgba(240, 193, 90, .35);
+}
+.turn-chip.yours .nm, .turn-chip.yours span { color: var(--gold); font-weight: 700; }
+.turn-chip.yours .dot { background: var(--gold); }
+.turn-chip.won .dot, .turn-chip.done .dot { animation: none; }
+@keyframes turn-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .35; transform: scale(.75); }
+}
+@media (prefers-reduced-motion: reduce) { .turn-chip .dot { animation: none; } }
+
+.table {
+  flex: 1; position: relative; display: flex; flex-direction: column;
+  align-items: center; padding: 14px; min-height: 0; overflow: hidden;
+}
+/* ---------------- the ring: six seats in play order ---------------- */
+.ring {
+  flex: 1; min-height: 0; width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.ring-face {
+  position: relative; flex: 1; min-height: 190px;
+  width: min(100%, 128vh);        /* keep it round-ish, not stretched */
+  align-self: center;
+  /* the seats sit at +/-37% of this box and are ~45px tall either side of
+     their centre, so leave them room instead of letting them spill out */
+  padding: 44px 0;
+}
+/* the direction of play, drawn once behind the seats */
+.ring-arrow { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.ring-arrow circle {
+  fill: none; stroke: rgba(255, 255, 255, .13); stroke-width: .5;
+  stroke-dasharray: 2.5 2.5;
+}
+.ring-arrow .arrow-head { fill: rgba(255, 255, 255, .3); }
+
+.ring-seat {
+  position: absolute; transform: translate(-50%, -50%);
+  width: 138px; padding: 6px 9px; border-radius: 12px;
+  border: 1px solid var(--line); background: rgba(0, 0, 0, .42);
+  text-align: center; transition: box-shadow .15s, background .15s;
+}
+/* Only the seat on turn is highlighted. Everything else stays quiet, so the
+   gold ring is the one thing that draws the eye - the team colour is a thin
+   identity stripe, not a highlight. */
+.ring-seat.a { border-top: 3px solid var(--team-a); }
+.ring-seat.b { border-top: 3px solid var(--team-b); }
+.ring-seat.turn {
+  box-shadow: 0 0 0 3px var(--gold), 0 6px 18px rgba(0, 0, 0, .45);
+  background: rgba(240, 193, 90, .22);
+  border-color: var(--gold);
+}
+.ring-seat.off { opacity: .55; }
+
+.ring-seat .pos {
+  font-size: 9px; text-transform: uppercase; letter-spacing: .08em;
+  opacity: .5; margin-bottom: 1px;
+}
+.ring-seat.mine .pos { color: #7ee0a6; opacity: .95; font-weight: 700; }
+.ring-seat .n {
+  font-weight: 700; font-size: 13px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ring-seat .s { font-size: 10px; opacity: .6; }
+.ring-seat .s .off { color: #ff9a8a; opacity: 1; }
+.ring-seat .bdgs { display: flex; gap: 3px; justify-content: center; flex-wrap: wrap; }
+.ring-seat .bdg {
+  font-size: 9px; padding: 0 5px; border-radius: 999px;
+  background: rgba(255, 255, 255, .14);
+}
+.ring-seat .bdg.master { color: var(--gold); background: rgba(240, 193, 90, .2); }
+.ring-seat .bdg.next { color: #7ee0a6; background: rgba(126, 224, 166, .2); }
+/* someone talking on the mic */
+.ring-seat.speaking { box-shadow: 0 0 0 3px #57d6ff, 0 0 18px rgba(87, 214, 255, .5); }
+
+.ring-centre {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 56%; display: flex; align-items: center; justify-content: center;
+}
+/* the played cards live inside the ring, so they run smaller than a hand card
+   and must not spill onto the seats around them */
+.ring-centre .card { --card-w: 44px; --card-h: 62px; }
+.ring-centre .card .pip { font-size: 19px; }
+.ring-centre .card .corner { font-size: 10px; top: 2px; left: 3px; }
+.ring-centre .card .kat { font-size: 8px; }
+.ring-centre .trick-area { gap: 5px; padding: 0; min-height: 0; }
+.ring-centre .slot .who { font-size: 9px; line-height: 1.25; }
+.ring-centre .slot .who .side { display: block; }
+
+/* who throws an open seat: the master, or that player */
+.throw-mode {
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+  margin-bottom: 6px; font-size: 10px;
+}
+.throw-mode .tm-label { text-transform: uppercase; letter-spacing: .07em; opacity: .5; }
+.throw-mode .tm-state { opacity: .75; }
+.throw-mode .tm-btn {
+  padding: 2px 8px; font-size: 10px; border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+}
+.throw-mode .tm-btn.on {
+  background: var(--gold); border-color: #d9a83c; color: #2a1c00; font-weight: 700;
+}
+.open-box.manual { border-color: rgba(87, 214, 255, .5); }
+.open-box.manual .open-hand-head .nm { color: #57d6ff; }
+
+/* ---------------- voice chat bar ---------------- */
+/* six-handed or four-handed, picked before the room is made */
+.table-size { margin-bottom: 14px; }
+.ts-head {
+  font-size: 12px; text-transform: uppercase; letter-spacing: .08em;
+  opacity: .65; margin-bottom: 6px;
+}
+.ts-buttons { display: flex; gap: 8px; }
+.ts-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 9px 6px; line-height: 1.25;
+}
+.ts-btn b { font-size: 21px; font-weight: 800; }
+.ts-btn span { font-size: 12px; opacity: .8; }
+.ts-btn small { font-size: 10px; opacity: .55; text-align: center; }
+.ts-btn.on { background: var(--gold); border-color: #d9a83c; color: #2a1c00; }
+.ts-btn.on span, .ts-btn.on small { opacity: .8; }
+
+/* A phone on its side is only ~350-430px tall. Everything above the hand has
+   to give way, or the ring runs under the cards. */
+@media (max-height: 460px) and (orientation: landscape) {
+  .topbar { padding: 4px 8px; gap: 6px; row-gap: 4px; font-size: 12px; }
+  .topbar button.ghost { padding: 3px 8px; font-size: 11px; }
+  .score { gap: 7px; }
+  .score .team { padding: 2px 8px; }
+  .score .team span { font-size: 15px; }
+  .turn-chip { padding: 3px 10px; font-size: 12px; }
+  .meta { gap: 7px; font-size: 11px; }
+
+  /* Three rows of seats have to fit in ~140px, so a seat becomes a single
+     chip: position marker and name only. The seat label and badges are
+     dropped - the ring position and the gold ring already carry that. */
+  .table { padding: 2px; }
+  .ring-face { min-height: 0; padding: 20px 0; }
+  .ring-seat {
+    width: 96px; padding: 1px 5px; border-top-width: 2px; border-radius: 8px;
+  }
+  .ring-seat .pos { font-size: 7px; margin: 0; letter-spacing: .04em; }
+  .ring-seat .n { font-size: 11px; }
+  .ring-seat .s, .ring-seat .bdgs { display: none; }
+  .ring-seat.master .n::after { content: " ★"; color: var(--gold); }
+
+  .ring-centre { width: 66%; }
+  .ring-centre .card { --card-w: 27px; --card-h: 38px; }
+  .ring-centre .card .pip { font-size: 12px; }
+  .ring-centre .card .corner { font-size: 7px; top: 1px; left: 2px; }
+  .ring-centre .card .kat { display: none; }
+  .ring-centre .trick-area { gap: 3px; }
+  .ring-centre .slot { gap: 1px; }
+  .ring-centre .slot .who { font-size: 7px; }
+  .ring-centre .slot .who .side { display: none; }
+
+  .hand-area { height: 48%; min-height: 0; padding: 4px 6px 6px; }
+  .you-label { font-size: 10px; margin-bottom: 2px; }
+  .open-head { font-size: 9px; margin-bottom: 3px; }
+  .open-hand-head { font-size: 11px; margin-bottom: 3px; padding-bottom: 3px; }
+  .throw-mode { margin-bottom: 3px; }
+  .notify { font-size: 11px; padding: 4px 12px; }
+  .turn-banner { font-size: 11px; min-height: 0; }
+}
+
+/* ---------------- turn your phone sideways ----------------
+   A page cannot force an orientation - screen.orientation.lock() only works
+   inside full screen, and never on iOS Safari - so a phone held upright during
+   play is asked to turn, with a full-screen button that CAN lock it on Android.
+   Only a real touch device in portrait sees this; a narrow desktop window
+   never does. */
+.rotate-gate { display: none; }
+@media (orientation: portrait) and (pointer: coarse) and (max-width: 950px) {
+  body.in-game .rotate-gate {
+    display: flex; position: fixed; inset: 0; z-index: 100;
+    align-items: center; justify-content: center; padding: 28px;
+    background: radial-gradient(circle at 50% 35%, var(--felt) 0%, #041d14 75%);
+  }
+}
+.rg-inner { text-align: center; max-width: 320px; }
+.rg-inner h2 { margin: 18px 0 6px; font-size: 21px; }
+.rg-inner p { margin: 0 0 20px; font-size: 14px; opacity: .75; line-height: 1.5; }
+.rg-inner button { width: 100%; }
+.rg-phone {
+  width: 74px; height: 124px; margin: 0 auto;
+  border: 3px solid var(--gold); border-radius: 12px;
+  position: relative;
+  animation: rg-turn 2.4s ease-in-out infinite;
+}
+.rg-phone::after {
+  content: ""; position: absolute; left: 50%; bottom: 7px; transform: translateX(-50%);
+  width: 22px; height: 3px; border-radius: 3px; background: var(--gold); opacity: .6;
+}
+@keyframes rg-turn {
+  0%, 30% { transform: rotate(0deg); }
+  55%, 85% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) { .rg-phone { animation: none; } }
+
+/* who made it */
+.credit {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 1.6;
+  opacity: .8;
+  text-align: center;
+}
+.credit b { font-weight: 700; opacity: 1; }
+.li-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 6px; padding: 3px 10px; border-radius: 999px;
+  color: #7cc3ff; text-decoration: none;
+  border: 1px solid rgba(124, 195, 255, .35); background: rgba(124, 195, 255, .1);
+}
+.li-link:hover { background: rgba(124, 195, 255, .22); color: #a6d8ff; }
+.li-link svg { width: 13px; height: 13px; fill: currentColor; }
+
+/* language switch */
+.lang-btn { white-space: nowrap; }
+#btn-lang-home {
+  width: 100%; margin-top: 10px; padding: 8px 14px; font-size: 13px;
+  background: rgba(255, 255, 255, .08);
+}
+
+/* rides in the top bar beside the other sound controls */
+.voice-bar { display: flex; align-items: center; gap: 5px; }
+.voice-bar .vb-who { display: none; }   /* the detail lives in the button titles */
+.voice-bar button.live { border-color: #57d6ff; color: #57d6ff; background: rgba(87, 214, 255, .16); }
+.voice-bar button.muted { border-color: #ff9a8a; color: #ff9a8a; background: rgba(255, 154, 138, .14); }
+
+/* ---------------- bidding + calling the master colour ---------------- */
+.trump-chip {
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  font-size: 12px; padding: 5px 12px; border-radius: 999px;
+  background: rgba(255, 255, 255, .12); border: 1px solid var(--line);
+}
+.trump-chip b { font-size: 17px; line-height: 1; }
+/* on a tight bar the words go and the suit alone carries it */
+@media (max-width: 1300px) { .trump-chip .lbl { display: none; } }
+.trump-chip.red b { color: #ff8f80; }
+
+.bid-area, .trump-area {
+  flex: 1; min-height: 0; width: min(720px, 100%); overflow-y: auto;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.bid-area h2, .trump-area h2 { margin: 2px 0; font-size: 18px; }
+.bid-sub { margin: 0 0 8px; font-size: 12px; opacity: .7; max-width: 560px; }
+
+/* the bidding panel takes the table's room, and the hand shrinks to suit */
+/* the bidding and colour panels take the table to themselves */
+#screen-game.phase-bid .ring { display: none; }
+#screen-game.phase-bid .hand-area { height: 30%; min-height: 140px; }
+.bid-area .hint, .trump-area .hint { margin: 2px 0 0; }
+
+.bid-list { width: 100%; max-width: 520px; margin-bottom: 8px; }
+.bid-row {
+  display: flex; align-items: center; gap: 10px; text-align: left;
+  padding: 5px 11px; margin-bottom: 4px; border-radius: 9px;
+  background: rgba(0, 0, 0, .28); border: 1px solid var(--line);
+}
+.bid-row.a { border-left: 3px solid var(--team-a); }
+.bid-row.b { border-left: 3px solid var(--team-b); }
+.bid-row.active { box-shadow: 0 0 0 2px var(--gold); background: rgba(240, 193, 90, .14); }
+.bid-row.leading .said { color: var(--gold); font-weight: 800; }
+.bid-row .who { font-weight: 700; font-size: 14px; }
+.bid-row .who i { opacity: .6; font-weight: 400; }
+.bid-row .lbl { font-size: 11px; opacity: .55; }
+.bid-row .said { margin-left: auto; font-size: 13px; opacity: .85; }
+.bid-row .said.num { font-size: 16px; font-weight: 700; }
+
+.bid-controls { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.bid-controls button { padding: 9px 14px; }
+.bid-value {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-width: 76px; padding: 4px 10px; border-radius: 12px;
+  border: 1px solid var(--gold); background: rgba(240, 193, 90, .14);
+}
+.bid-value span { font-size: 26px; font-weight: 800; color: var(--gold); line-height: 1; }
+.bid-value small { font-size: 10px; opacity: .7; text-transform: uppercase; letter-spacing: .07em; }
+
+.trump-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 10px 0; }
+.trump-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  width: 108px; padding: 12px 8px; background: #fdfcf7; color: #1a1a1a;
+  border: 2px solid #cfc9b8; border-radius: 12px; font-weight: 700;
+}
+.trump-btn:hover:not(:disabled) { background: #fff; border-color: var(--gold); transform: translateY(-3px); }
+.trump-btn .sym { font-size: 30px; line-height: 1; }
+.trump-btn .nm { font-size: 13px; }
+.trump-btn .cnt { font-size: 11px; opacity: .6; font-weight: 400; }
+.trump-btn.red { color: #c0392b; }
+
+.trick-area {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 10px; flex-wrap: wrap; padding: 12px; min-height: 130px;
+}
+.slot { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.slot .who { font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.slot .who .nm { opacity: .75; }
+.slot .who .side { font-size: 10px; font-weight: 700; white-space: nowrap; }
+
+/* whose card is this - marked relative to YOU, not by team letter */
+.slot.mine .card, .slot.ally .card {
+  box-shadow: 0 0 0 2px rgba(126, 224, 166, .8), 0 3px 8px rgba(0, 0, 0, .45);
+}
+.slot.mine .side, .slot.ally .side { color: #7ee0a6; }
+.slot.foe .card { box-shadow: 0 0 0 2px rgba(255, 122, 89, .65), 0 3px 8px rgba(0, 0, 0, .45); }
+.slot.foe .side { color: #ff9a8a; }
+
+/* the card holding the hand still wins the highlight */
+.slot.winning .card { box-shadow: 0 0 0 3px var(--gold), 0 8px 20px rgba(0, 0, 0, .5); transform: translateY(-6px); }
+.slot.winning .who .nm { color: var(--gold); font-weight: 700; opacity: 1; }
+
+.turn-banner { min-height: 24px; font-size: 14px; opacity: .9; text-align: center; }
+.turn-banner b { color: var(--gold); }
+
+/* the master's call to play - his own turn, or a throw for an open partner */
+.notify {
+  max-width: 640px; text-align: center; font-size: 14px; line-height: 1.5;
+  padding: 9px 18px; border-radius: 999px; margin-bottom: 4px;
+  border: 1px solid var(--gold); background: rgba(240, 193, 90, .16);
+  animation: notify-pulse 1.7s ease-in-out infinite;
+}
+.notify b { color: var(--gold); }
+.notify.partner { border-color: #7ee0a6; background: rgba(126, 224, 166, .15); }
+.notify.partner b { color: #7ee0a6; }
+@keyframes notify-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(240, 193, 90, .45); }
+  50% { box-shadow: 0 0 0 7px rgba(240, 193, 90, 0); }
+}
+.master-tag { color: var(--gold); letter-spacing: .08em; font-size: 11px; }
+.played-for { opacity: .8; font-style: italic; }
+
+/* The footer owns a fixed slice of the window, and the hand scales itself to
+   fill it - all four suit rows stay visible, so it never needs a scrollbar. */
+.hand-area {
+  border-top: 1px solid var(--line); background: rgba(0, 0, 0, .3);
+  padding: 8px 12px 12px; height: 46%; min-height: 210px;
+}
+.hand-split { display: flex; gap: 14px; align-items: stretch; height: 100%; }
+.own-hand { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; min-height: 0; }
+.you-label { font-size: 12px; opacity: .75; margin-bottom: 6px; flex: none; }
+.hand {
+  flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 4px;
+  /* fitHand normally makes this fit exactly; this only bites when zoomed in */
+  overflow-y: auto;
+}
+.suit-row { display: flex; align-items: center; gap: 2px; }
+.suit-row .row-tag { width: 20px; font-size: 15px; opacity: .6; flex: none; }
+.suit-row .cards { display: flex; }
+
+/* sizes are computed in fitHand() and land here as custom properties */
+.hand .card { width: var(--hand-cw, var(--card-w)); height: var(--hand-ch, var(--card-h)); }
+.hand .card .pip { font-size: calc(var(--hand-ch, 88px) * .30); }
+.hand .card .corner { font-size: calc(var(--hand-ch, 88px) * .15); top: 2px; left: 4px; }
+.hand .card .kat { font-size: calc(var(--hand-ch, 88px) * .10); }
+.suit-row .cards .card:not(:first-child) { margin-left: var(--hand-overlap, -26px); }
+
+/* ---------------- cards ---------------- */
+.card {
+  width: var(--card-w); height: var(--card-h); flex: none;
+  border-radius: 7px; background: #fdfcf7; color: #1a1a1a;
+  border: 1px solid #cfc9b8; position: relative;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .4);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; user-select: none;
+  transition: transform .12s, box-shadow .12s, margin .12s;
+}
+.card .corner { position: absolute; top: 3px; left: 5px; font-size: 13px; line-height: 1; text-align: center; }
+.card .pip { font-size: 26px; }
+.card .kat { position: absolute; bottom: 3px; right: 5px; font-size: 9px; opacity: .45; font-weight: 600; }
+.card.red { color: #c0392b; }
+.card.black { color: #1a1a1a; }
+.hand .card { cursor: not-allowed; filter: grayscale(.55) brightness(.85); }
+.hand .card.playable { cursor: pointer; filter: none; }
+.hand .card.playable:hover { transform: translateY(-14px); z-index: 5; box-shadow: 0 10px 22px rgba(0, 0, 0, .55); }
+.card.back {
+  background: repeating-linear-gradient(45deg, #7b1a1a, #7b1a1a 6px, #a32626 6px, #a32626 12px);
+  border-color: #5c1010;
+}
+
+/* ---------------- open hands (Team A players 2 and 3, face up) ------------ */
+.open-hands {
+  flex: 1 1 620px; min-width: 0;
+  display: flex; flex-direction: column; min-height: 0;
+}
+.open-hands.collapsed #open-hands-body { display: none; }
+.open-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  opacity: .7; margin-bottom: 6px;
+}
+
+/* one box per open player, side by side */
+#open-hands-body { display: flex; gap: 10px; align-items: stretch; flex: 1; min-height: 0; }
+.open-box {
+  flex: 1 1 0; min-width: 0;
+  border: 1px solid var(--line); border-radius: 12px;
+  background: rgba(0, 0, 0, .34);
+  padding: 8px 10px 10px;
+  max-height: 100%; overflow-y: auto;
+}
+.open-box.is-turn { border-color: var(--gold); background: rgba(240, 193, 90, .12); }
+
+.open-hand-head {
+  display: flex; align-items: baseline; gap: 7px; font-size: 13px;
+  margin-bottom: 6px; padding-bottom: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+.open-hand-head .nm { font-weight: 700; color: var(--team-a); }
+.open-hand-head .lb { opacity: .6; font-size: 11px; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; }
+.open-hand-head .ct {
+  margin-left: auto; flex: none; font-size: 11px; font-weight: 700;
+  background: rgba(255, 255, 255, .12); border-radius: 999px; padding: 1px 8px;
+}
+.open-box.is-turn .nm { color: var(--gold); }
+
+.open-row { display: flex; align-items: flex-start; gap: 4px; margin-bottom: 3px; }
+.open-row .row-tag { width: 14px; font-size: 13px; opacity: .7; flex: none; padding-top: 8px; }
+.open-row .cards { display: flex; flex-wrap: wrap; gap: 3px; }
+.mini {
+  width: 26px; height: 34px; flex: none;
+  border-radius: 4px; background: #fdfcf7; border: 1px solid #cfc9b8;
+  color: #1a1a1a; line-height: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+}
+.mini .r { font-size: 12px; font-weight: 800; }
+.mini .s { font-size: 9px; opacity: .85; }
+.mini.red { color: #c0392b; }
+.mini.playable-now { box-shadow: 0 0 0 2px var(--gold), 0 1px 2px rgba(0, 0, 0, .35); }
+/* the master picking a card for this seat */
+.mini.clickable { cursor: pointer; transition: transform .1s, box-shadow .1s; }
+.mini.clickable:hover { transform: translateY(-5px) scale(1.14); box-shadow: 0 0 0 2px var(--gold), 0 8px 14px rgba(0, 0, 0, .5); }
+.mini.blocked { opacity: .38; cursor: not-allowed; }
+.open-box.my-move {
+  border-color: #7ee0a6; background: rgba(126, 224, 166, .12);
+  box-shadow: 0 0 0 2px rgba(126, 224, 166, .5);
+}
+.open-box.my-move .nm { color: #7ee0a6; }
+
+/* ---------------- points table ---------------- */
+.points {
+  position: fixed; inset: 0; z-index: 60; display: flex;
+  align-items: center; justify-content: center; padding: 20px;
+  background: rgba(0, 0, 0, .72);
+}
+.points-card {
+  width: min(760px, 100%); max-height: 86vh; display: flex; flex-direction: column;
+  background: #10251c; border: 1px solid var(--line); border-radius: 16px;
+  padding: 16px 18px 18px;
+}
+.points-head { display: flex; align-items: center; justify-content: space-between; }
+.points-head h2 { margin: 0 0 10px; font-size: 20px; }
+#points-body { overflow-y: auto; min-height: 0; }
+
+.pt-totals { display: flex; gap: 10px; margin-bottom: 14px; }
+.pt-total {
+  flex: 1; display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-radius: 12px; background: rgba(0, 0, 0, .3);
+  border: 1px solid var(--line);
+}
+.pt-total.team-a { border-color: var(--team-a); }
+.pt-total.team-b { border-color: var(--team-b); }
+.pt-total.mine { box-shadow: 0 0 0 1px #7ee0a6 inset; }
+.pt-total .pt-team { font-size: 12px; opacity: .75; }
+.pt-total b { font-size: 26px; font-weight: 800; }
+.pt-total.team-a b { color: var(--team-a); }
+.pt-total.team-b b { color: var(--team-b); }
+
+.pt-scroll { overflow-x: auto; }
+.pt-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.pt-table th {
+  text-align: left; font-size: 10px; text-transform: uppercase;
+  letter-spacing: .07em; opacity: .55; padding: 0 8px 6px; font-weight: 600;
+}
+.pt-table td { padding: 7px 8px; border-top: 1px solid rgba(255, 255, 255, .08); }
+.pt-table td small { opacity: .55; font-size: 11px; }
+.pt-table .num { text-align: right; }
+.pt-table td.red { color: #ff8f80; }
+.pt-table td.plus { color: #7ee0a6; font-weight: 700; }
+.pt-table td.minus { color: #ff9a8a; font-weight: 700; }
+.pt-chal { color: var(--gold); font-weight: 700; }
+.pt-empty, .pt-rules { text-align: center; }
+.pt-rules { margin: 12px 0 0; font-size: 11px; line-height: 1.6; }
+
+/* ---------------- overlays ---------------- */
+.logbox {
+  position: fixed; right: 0; top: 52px; bottom: 0; width: 320px;
+  background: rgba(0, 0, 0, .82); border-left: 1px solid var(--line);
+  padding: 12px 14px; overflow-y: auto; font-size: 13px;
+}
+.logbox h3 { margin: 0 0 8px; font-size: 14px; opacity: .8; }
+.logbox div div { padding: 4px 0; border-bottom: 1px solid rgba(255, 255, 255, .07); opacity: .85; }
+
+.gameover { position: fixed; inset: 0; background: rgba(0, 0, 0, .72); display: flex; align-items: center; justify-content: center; }
+.gameover-card { text-align: center; padding: 34px 44px; border-radius: 18px; background: #10251c; border: 1px solid var(--line); }
+.gameover-card h2 { margin: 0 0 8px; font-size: 30px; color: var(--gold); }
+.gameover-card p { margin: 0 0 20px; opacity: .8; }
+
+/* your-turn shake */
+@keyframes shake-screen {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  8%  { transform: translate3d(-9px, 0, 0); }
+  20% { transform: translate3d(8px, -2px, 0); }
+  32% { transform: translate3d(-7px, 2px, 0); }
+  44% { transform: translate3d(6px, -1px, 0); }
+  56% { transform: translate3d(-4px, 1px, 0); }
+  70% { transform: translate3d(3px, 0, 0); }
+  85% { transform: translate3d(-2px, 0, 0); }
+}
+.shake { animation: shake-screen .6s cubic-bezier(.36, .07, .19, .97) both; }
+@media (prefers-reduced-motion: reduce) {
+  .shake { animation: none; }
+  .notify { animation: none; }
+}
+
+.toast {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+  background: #6d1f1f; border: 1px solid #a33; padding: 10px 18px; border-radius: 10px;
+  font-size: 14px; z-index: 50; max-width: 80vw; text-align: center;
+}
+.toast.info { background: #123a2b; border-color: #2f7d5c; }
+
+/* host controls that discard a deal: red, and armed after the first click */
+button.ghost.danger { border-color: rgba(255, 122, 89, .5); color: #ffb3a1; }
+button.ghost.danger:hover:not(:disabled) { background: rgba(255, 122, 89, .2); }
+button.armed {
+  background: var(--gold); border-color: #d9a83c; color: #2a1c00; font-weight: 700;
+  animation: notify-pulse 1.1s ease-in-out infinite;
+}
+button.ghost.danger.armed { background: #c0392b; border-color: #e05a4a; color: #fff; }
+
+/* Short windows: tighten everything above the hand so the table, the played
+   cards and the full hand all stay on screen together. */
+@media (max-height: 640px) {
+  :root { --card-w: 46px; --card-h: 66px; }
+  .table { padding: 8px; }
+  .trick-area { min-height: 0; padding: 6px; gap: 6px; }
+  .opp { width: 112px; padding: 5px 8px; }
+  .opp .n { font-size: 12px; }
+  .opp .s, .opp .c { font-size: 10px; }
+  .turn-banner { min-height: 18px; font-size: 13px; }
+  .hand-area { height: 42%; min-height: 168px; }
+}
+
+/* keep three seats abreast on each side rather than stacking them */
+@media (max-width: 900px) {
+  .seat-row { gap: 10px; }
+  .opp { width: 112px; padding: 6px 8px; }
+  .opp .n { font-size: 12px; }
+  .opp .s, .opp .c, .opp .side { font-size: 10px; }
+}
+
+@media (max-width: 720px) and (orientation: portrait) {
+  :root { --card-w: 50px; --card-h: 72px; }
+  .suit-row .cards .card:not(:first-child) { margin-left: -22px; }
+  .opp { width: 104px; }
+  .lobby-seats { grid-template-columns: 1fr; }
+  .hand-area { height: auto; }
+  .hand-split { flex-direction: column; height: auto; }
+  #open-hands-body { flex-direction: column; }
+  .open-box { width: 100%; max-height: 26vh; }
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile landscape. A phone on its side is about 360-430px tall, so the whole
+   table has to fit in that with nothing scrolling. Your own three seats go:
+   your hand is already along the bottom, the master's team mates are in the
+   open boxes, and every card on the table still carries its 🤝 / ⚔️ marker.
+   --------------------------------------------------------------------------- */
+@media (max-height: 520px) {
+  :root { --card-w: 40px; --card-h: 56px; }
+
+  /* wrap, not nowrap: zooming in narrows the effective width and the chips
+     would otherwise pile on top of each other rather than move to a new row */
+  .topbar { padding: 4px 8px; gap: 6px; row-gap: 4px; }
+  .score { gap: 6px; }
+  .score .team { padding: 2px 8px; gap: 5px; font-size: 11px; }
+  .score .team span { font-size: 15px; }
+  .trump-chip { padding: 2px 8px; }
+  .trump-chip .lbl { display: none; }
+  .turn-chip { padding: 3px 10px; font-size: 12px; gap: 6px; }
+  .turn-chip .dot { width: 7px; height: 7px; }
+  .meta { gap: 7px; font-size: 11px; }
+  .meta .m-hand { display: none; }
+  .m-only { display: inline-flex; }
+  .zoom-controls { gap: 2px; }
+  #zoom-level { font-size: 10px; min-width: 30px; }
+  .meta button.ghost { padding: 3px 7px; font-size: 11px; }
+
+  /* your own side of the table is hidden - only the opposition is listed */
+  .seat-group.mine { display: none; }
+  .seat-group .grp-head { display: none; }
+  .seat-row { justify-content: flex-end; gap: 6px; }
+  .opp { width: auto; min-width: 78px; padding: 3px 7px; border-radius: 8px; }
+  .opp .s, .opp .side { display: none; }
+  .opp .n { font-size: 11px; }
+  .opp .c { font-size: 10px; margin-top: 1px; }
+
+  .table { padding: 5px 8px; }
+  .trick-area { min-height: 0; padding: 3px; gap: 5px; }
+  .slot { gap: 2px; }
+  .slot .who { font-size: 9px; }
+  .slot .who .side { font-size: 8px; }
+  /* The banner under the table said what the top-bar chip already says, and on
+     a short screen the played cards spilled over it. The chip carries the lead
+     suit now, so both go. */
+  .turn-banner, .notify { display: none; }
+
+  .hand-area { height: 46%; min-height: 0; padding: 4px 8px 6px; }
+  .hand-split { gap: 8px; }
+  .you-label { font-size: 10px; margin-bottom: 3px; }
+  /* Cards in your hand get small enough here that a scaled pip is a smudge,
+     so they wear the compact face: rank and suit in the corner, nothing else. */
+  .hand .card .pip, .hand .card .kat { display: none; }
+  .hand .card .corner { font-size: 9px; top: 2px; left: 3px; line-height: 1.05; }
+  .open-head { font-size: 9px; margin-bottom: 3px; }
+  .open-box { padding: 4px 6px 5px; border-radius: 8px; }
+  .open-hand-head { font-size: 10px; gap: 5px; margin-bottom: 3px; padding-bottom: 3px; }
+  .open-hand-head .lb { display: none; }
+  .open-row { gap: 3px; margin-bottom: 2px; }
+  .open-row .row-tag { width: 10px; font-size: 10px; padding-top: 5px; }
+  .open-row .cards { gap: 2px; }
+  .mini { width: 18px; height: 24px; border-radius: 3px; }
+  .mini .r { font-size: 9px; }
+  .mini .s { font-size: 7px; }
+
+  /* bidding has to fit the same box - the turn chip already says "Your call",
+     so the heading and the blurb go and the rows tighten right up */
+  .bid-area h2, .bid-sub { display: none; }
+  .trump-area h2 { font-size: 14px; margin: 0 0 2px; }
+  .bid-list { margin-bottom: 5px; }
+  .bid-row { padding: 1px 9px; margin-bottom: 1px; }
+  .bid-row .who { font-size: 11px; }
+  .bid-row .said { font-size: 11px; }
+  .bid-row .said.num { font-size: 13px; }
+  .bid-row .lbl { display: none; }
+  .bid-area .hint, .trump-area .hint { font-size: 10px; min-height: 0; }
+  .bid-controls { margin-bottom: 2px; gap: 6px; }
+  .bid-controls button { padding: 5px 10px; }
+  .bid-value { min-width: 58px; padding: 2px 8px; }
+  .bid-value span { font-size: 19px; }
+  .trump-btn { width: 78px; padding: 6px; }
+  .trump-btn .sym { font-size: 22px; }
+  .trump-btn .nm { font-size: 11px; }
+  .trump-btn .cnt { font-size: 9px; }
+  #screen-game.phase-bid .hand-area { height: 36%; min-height: 0; }
+  .logbox { top: 40px; width: 240px; font-size: 11px; }
+}

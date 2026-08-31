@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Terry by eClipso</title>
+<link rel="stylesheet" href="style.css" />
+<meta name="description" content="A 4 or 6 player, two-team card game. Bid your hands, call the master colour, and take the tricks. Create a room and invite your friends." />
+
+<!-- Link previews. WhatsApp will not read an SVG, so og:image is a PNG and
+     the URL is absolute - relative paths are ignored by most scrapers. -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Terry by eClipso" />
+<meta property="og:title" content="Terry by eClipso — play the card game online" />
+<meta property="og:description" content="A 4 or 6 player, two-team card game. Bid your hands, call the master colour, and take the tricks. Create a room and invite your friends." />
+<meta property="og:url" content="https://terry.eclipso.in/" />
+<meta property="og:image" content="https://terry.eclipso.in/og.png" />
+<meta property="og:image:secure_url" content="https://terry.eclipso.in/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="A fan of five playing cards on a green baize table" />
+<meta property="og:locale" content="en_IN" />
+<meta property="og:locale:alternate" content="gu_IN" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Terry by eClipso — play the card game online" />
+<meta name="twitter:description" content="A 4 or 6 player, two-team card game. Bid your hands, call the master colour, and take the tricks." />
+<meta name="twitter:image" content="https://terry.eclipso.in/og.png" />
+
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+<meta name="theme-color" content="#0d5c3f" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+</head>
+<body>
+
+<!-- ------------------------------------------------------------------ -->
+<section id="screen-home" class="screen">
+  <div class="home-card">
+    <h1>Terry <span>by eClipso</span></h1>
+    <p class="tagline" data-i18n="app.tagline"></p>
+
+    <label class="field">
+      <span data-i18n="home.yourName"></span>
+      <input id="input-name" maxlength="16" data-i18n-ph="home.namePlaceholder" autocomplete="off" />
+    </label>
+
+    <div class="table-size">
+      <div class="ts-head" data-i18n="home.tableSize"></div>
+      <div class="ts-buttons">
+        <button class="ts-btn on" data-players="6">
+          <b>6</b><span data-i18n="home.sixPlayers"></span><small data-i18n="home.sixNote"></small>
+        </button>
+        <button class="ts-btn" data-players="4">
+          <b>4</b><span data-i18n="home.fourPlayers"></span><small data-i18n="home.fourNote"></small>
+        </button>
+      </div>
+    </div>
+
+    <button id="btn-create" class="primary" data-i18n="home.create"></button>
+
+    <div class="divider"><span data-i18n="home.orJoin"></span></div>
+
+    <label class="field">
+      <span data-i18n="home.roomCode"></span>
+      <input id="input-code" maxlength="5" placeholder="ABCDE" autocomplete="off" />
+    </label>
+    <button id="btn-join" data-i18n="home.join"></button>
+
+    <p id="home-error" class="error"></p>
+
+    <button id="btn-lang-home" class="lang-btn"></button>
+
+    <p class="credit">
+      <span data-i18n-html="home.credit"></span>
+      <a class="li-link" href="https://www.linkedin.com/in/vanrajlanga/"
+         target="_blank" rel="noopener noreferrer" title="Vanraj Langa on LinkedIn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+        <span>LinkedIn</span>
+      </a>
+    </p>
+
+    <details class="rules">
+      <summary data-i18n="home.rulesSummary"></summary>
+      <ul data-i18n-html="home.rulesBody"></ul>
+    </details>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------------ -->
+<section id="screen-lobby" class="screen hidden">
+  <div class="home-card wide">
+    <h2><span data-i18n="lobby.room"></span> <span id="lobby-code" class="code"></span></h2>
+    <p class="tagline" data-i18n="lobby.share"></p>
+    <div class="invite">
+      <input id="invite-link" readonly />
+      <button id="btn-copy" data-i18n="lobby.copy"></button>
+      <button id="btn-whatsapp" class="wa-btn" data-i18n="lobby.whatsapp"></button>
+    </div>
+
+    <div id="lobby-seats" class="lobby-seats"></div>
+
+    <div class="difficulty">
+      <div class="diff-head" data-i18n="lobby.botSkill"></div>
+      <div class="diff-buttons">
+        <button class="diff-btn" data-level="easy"><span data-i18n="lobby.easy"></span><small data-i18n="lobby.easyNote"></small></button>
+        <button class="diff-btn" data-level="medium"><span data-i18n="lobby.medium"></span><small data-i18n="lobby.mediumNote"></small></button>
+        <button class="diff-btn" data-level="hard"><span data-i18n="lobby.hard"></span><small data-i18n="lobby.hardNote"></small></button>
+      </div>
+      <p id="diff-hint" class="hint"></p>
+    </div>
+
+    <div class="lobby-actions">
+      <button id="btn-add-bot" data-i18n="lobby.addBot"></button>
+      <button id="btn-fill-bots" data-i18n="lobby.fillBots"></button>
+      <button id="btn-start" class="primary" data-i18n="lobby.start"></button>
+    </div>
+    <p id="lobby-hint" class="hint"></p>
+
+    <div class="lobby-foot">
+      <button id="btn-change-game" class="ghost" data-i18n="lobby.changeGame"></button>
+      <button id="btn-lang-lobby" class="ghost lang-btn"></button>
+      <button id="btn-clear-seats" class="ghost danger hidden"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ------------------------------------------------------------------ -->
+<section id="screen-game" class="screen hidden">
+  <header class="topbar">
+    <div class="score">
+      <div class="team team-a" id="chip-a"><b data-i18n="bar.teamA"></b><span id="score-a">0</span><i class="need" id="need-a"></i></div>
+      <div class="target" id="target-note">first to <b id="target">19</b></div>
+      <div class="team team-b" id="chip-b"><b data-i18n="bar.teamB"></b><span id="score-b">0</span><i class="need" id="need-b"></i></div>
+      <div class="trump-chip hidden" id="trump-chip"></div>
+    </div>
+    <div id="turn-chip" class="turn-chip"></div>
+    <div class="meta">
+      <span class="m-hand"><span data-i18n="bar.hand"></span> <b id="trick-no">1</b> / <b id="trick-total">37</b></span>
+      <span class="m-room"><span data-i18n="bar.room"></span> <b id="game-code"></b></span>
+      <span class="zoom-controls m-only">
+        <button id="btn-zoom-out" class="ghost" title="Zoom out">&minus;</button>
+        <span id="zoom-level">100%</span>
+        <button id="btn-zoom-in" class="ghost" title="Zoom in">+</button>
+      </span>
+      <button id="btn-fullscreen" class="ghost m-only" title="Full screen">⛶</button>
+      <button id="btn-sound" class="ghost" title="Turn alert sound">🔔</button>
+      <button id="btn-voice" class="ghost" title="Call the player's name out loud">🔊</button>
+      <!-- voice chat: peer-to-peer audio, opened by the master -->
+      <span id="voice-bar" class="voice-bar hidden">
+        <button id="btn-voice-enable" class="ghost hidden"></button>
+        <button id="btn-voice-join" class="ghost hidden"></button>
+        <button id="btn-mic" class="ghost hidden"></button>
+        <span id="voice-who" class="vb-who"></span>
+      </span>
+      <button id="btn-lang" class="ghost lang-btn"></button>
+      <button id="btn-points" class="ghost" data-i18n="points.button"></button>
+      <button id="btn-log-toggle" class="ghost" data-i18n="bar.log"></button>
+      <button id="btn-give-up" class="ghost danger hidden"></button>
+      <button id="btn-new-deal" class="ghost hidden" title="Shuffle and deal a fresh game">New game</button>
+      <button id="btn-end-game" class="ghost danger hidden" title="End this game and send everyone back to the lobby">End game</button>
+    </div>
+  </header>
+
+  <main class="table">
+    <!-- the table: six seats in play order around the ring, cards in the middle -->
+    <div id="ring" class="ring">
+      <div class="ring-face">
+        <svg class="ring-arrow" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="41" />
+          <path d="M 50 6 l -4.5 -5 l 9 0 z" class="arrow-head" />
+        </svg>
+        <div id="ring-seats"></div>
+        <div id="ring-centre" class="ring-centre">
+          <div id="trick-area" class="trick-area"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- bidding: everyone sees only their own cards and calls a number -->
+    <div id="bid-area" class="bid-area hidden">
+      <h2 data-i18n="bid.title"></h2>
+      <p class="bid-sub" data-i18n="bid.sub"></p>
+      <div id="bid-list" class="bid-list"></div>
+      <div id="bid-controls" class="bid-controls hidden">
+        <button id="btn-bid-down" class="ghost">&minus;</button>
+        <div class="bid-value"><span id="bid-value">19</span><small data-i18n="bid.hands"></small></div>
+        <button id="btn-bid-up" class="ghost">+</button>
+        <button id="btn-bid" class="primary" data-i18n="bid.callIt"></button>
+        <button id="btn-pass" data-i18n="bid.pass"></button>
+      </div>
+      <p id="bid-hint" class="hint"></p>
+    </div>
+
+    <!-- the master names the master colour -->
+    <div id="trump-area" class="trump-area hidden">
+      <h2 id="trump-title"></h2>
+      <div id="trump-buttons" class="trump-buttons"></div>
+      <p id="trump-hint" class="hint"></p>
+    </div>
+
+    <!-- each opponent is asked, in turn, whether to challenge the colour -->
+    <div id="challenge-area" class="trump-area hidden">
+      <h2 id="challenge-title"></h2>
+      <p id="challenge-sub" class="bid-sub"></p>
+      <div id="challenge-list" class="bid-list"></div>
+      <div id="challenge-controls" class="bid-controls hidden">
+        <button id="btn-challenge" class="primary"></button>
+        <button id="btn-challenge-pass"></button>
+      </div>
+      <p id="challenge-hint" class="hint"></p>
+    </div>
+
+    <div id="notify" class="notify hidden"></div>
+    <div id="turn-banner" class="turn-banner"></div>
+  </main>
+
+  <div id="voice-audio" class="hidden"></div>
+
+  <footer class="hand-area">
+    <div class="hand-split">
+      <div class="own-hand">
+        <div id="you-label" class="you-label"></div>
+        <div id="hand" class="hand"></div>
+      </div>
+      <aside id="open-hands" class="open-hands">
+        <div class="open-head">
+          <span data-i18n="open.title"></span>
+          <button id="btn-open-toggle" class="ghost" data-i18n="open.hide"></button>
+        </div>
+        <div id="open-hands-body"></div>
+      </aside>
+    </div>
+  </footer>
+
+  <aside id="logbox" class="logbox hidden"><h3 data-i18n="log.title"></h3><div id="log"></div></aside>
+
+  <div id="gameover" class="gameover hidden">
+    <div class="gameover-card">
+      <h2 id="gameover-title"></h2>
+      <p id="gameover-sub"></p>
+      <button id="btn-again" class="primary">Deal again</button>
+    </div>
+  </div>
+</section>
+
+<div id="rotate-gate" class="rotate-gate">
+  <div class="rg-inner">
+    <div class="rg-phone" aria-hidden="true"></div>
+    <h2 data-i18n="rotate.title"></h2>
+    <p data-i18n="rotate.sub"></p>
+    <button id="btn-rotate-fs" class="primary" data-i18n-html="rotate.fullscreen"></button>
+  </div>
+</div>
+
+<div id="points" class="points hidden">
+  <div class="points-card">
+    <div class="points-head">
+      <h2 data-i18n="points.title"></h2>
+      <button id="btn-points-close" class="ghost">&times;</button>
+    </div>
+    <div id="points-body"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="i18n.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="voice.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
