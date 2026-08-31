@@ -1,48 +1,46 @@
 import 'package:flutter/material.dart';
 
 import '../../game/cards.dart';
-import '../../game/engine.dart';
+import '../../model/table_state.dart';
 import '../theme.dart';
 import 'card_view.dart';
 
-/// The master's two team mates play face up. Everyone at the table sees these,
-/// and when the master is on turn for one of them he throws from this box.
+/// The master's team mates play face up once the colour is settled. Everyone at
+/// the table sees these; the master throws from them, unless he has handed a
+/// seat back for that player to throw their own.
 class OpenHands extends StatelessWidget {
   const OpenHands({
     super.key,
+    required this.state,
     required this.game,
-    required this.mySeat,
     required this.onPlay,
+    this.onToggleManual,
   });
 
-  final TerryGame game;
-  final int mySeat;
-  final void Function(int seat, TerryCard card) onPlay;
+  final TableState state;
+  final GameView game;
+  final void Function(TerryCard card) onPlay;
+  final void Function(int seat, bool manual)? onToggleManual;
 
   @override
   Widget build(BuildContext context) {
-    if (game.phase != GamePhase.playing || game.openSeats.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    if (game.openHands.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text(
           'OPEN HANDS — FACE UP TO EVERYONE',
           style: TextStyle(
-            fontSize: 9.5,
-            letterSpacing: 0.9,
-            color: Color(0xB3EEF5F1),
-          ),
+              fontSize: 9.5, letterSpacing: 0.9, color: Color(0xB3EEF5F1)),
         ),
         const SizedBox(height: 4),
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              for (int i = 0; i < game.openSeats.length; i++) ...<Widget>[
+              for (int i = 0; i < game.openHands.length; i++) ...<Widget>[
                 if (i > 0) const SizedBox(width: 8),
-                Expanded(child: _box(game.openSeats[i])),
+                Expanded(child: _box(game.openHands[i])),
               ],
             ],
           ),
@@ -51,14 +49,14 @@ class OpenHands extends StatelessWidget {
     );
   }
 
-  Widget _box(int seat) {
-    final bool theirTurn = game.turn == seat &&
+  Widget _box(OpenHand hand) {
+    final bool theirTurn = game.turn == hand.seat &&
         !game.finished &&
         game.trickWinner == null;
-    final bool iThrowIt = theirTurn && game.controllerOf(seat) == mySeat;
-    final Set<String> legal = iThrowIt
-        ? game.legalMoves(seat).map((TerryCard c) => c.id).toSet()
-        : <String>{};
+    // I throw from this box when the seat is on turn and I control it - the
+    // master normally, or the player themselves when it is set to manual.
+    final bool iThrowIt = theirTurn && game.controllerSeat == state.you;
+    final Set<String> legal = iThrowIt ? game.legal : const <String>{};
 
     return Container(
       padding: const EdgeInsets.fromLTRB(7, 5, 7, 6),
@@ -77,7 +75,7 @@ class OpenHands extends StatelessWidget {
             children: <Widget>[
               Flexible(
                 child: Text(
-                  game.nameOf(seat),
+                  hand.name ?? 'Seat ${hand.seat + 1}',
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12,
@@ -86,18 +84,36 @@ class OpenHands extends StatelessWidget {
                   ),
                 ),
               ),
+              if (hand.manual)
+                const Padding(
+                  padding: EdgeInsets.only(left: 3),
+                  child: Icon(Icons.pan_tool_alt_outlined,
+                      size: 12, color: Felt.gold),
+                ),
               const Spacer(),
+              if (onToggleManual != null)
+                GestureDetector(
+                  onTap: () => onToggleManual!(hand.seat, !hand.manual),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Text(
+                      hand.manual ? 'take back' : 'let them throw',
+                      style: const TextStyle(
+                          fontSize: 8.5,
+                          color: Felt.gold,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                 decoration: BoxDecoration(
                   color: const Color(0x1FFFFFFF),
                   borderRadius: BorderRadius.circular(999),
                 ),
-                child: Text(
-                  '${game.hands[seat].length}',
-                  style: const TextStyle(
-                      fontSize: 10, fontWeight: FontWeight.w700),
-                ),
+                child: Text('${hand.cards.length}',
+                    style: const TextStyle(
+                        fontSize: 10, fontWeight: FontWeight.w700)),
               ),
             ],
           ),
@@ -107,9 +123,9 @@ class OpenHands extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  for (final Suit suit in Suit.values)
-                    if (game.hands[seat].any((TerryCard c) => c.suit == suit))
-                      _suitLine(seat, suit, legal, iThrowIt),
+                  for (final String suit in kSuits)
+                    if (hand.cards.any((TerryCard c) => c.suit == suit))
+                      _suitLine(hand, suit, legal, iThrowIt),
                 ],
               ),
             ),
@@ -119,9 +135,14 @@ class OpenHands extends StatelessWidget {
     );
   }
 
-  Widget _suitLine(int seat, Suit suit, Set<String> legal, bool iThrowIt) {
+  Widget _suitLine(
+    OpenHand hand,
+    String suit,
+    Set<String> legal,
+    bool iThrowIt,
+  ) {
     final List<TerryCard> row =
-        game.hands[seat].where((TerryCard c) => c.suit == suit).toList();
+        hand.cards.where((TerryCard c) => c.suit == suit).toList();
     return Padding(
       padding: const EdgeInsets.only(bottom: 3),
       child: Row(
@@ -132,10 +153,10 @@ class OpenHands extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Text(
-                suit.symbol,
+                suitSymbol(suit),
                 style: TextStyle(
                   fontSize: 11,
-                  color: suit.isRed ? Felt.foe : const Color(0xB3EEF5F1),
+                  color: suitIsRed(suit) ? Felt.foe : const Color(0xB3EEF5F1),
                 ),
               ),
             ),
@@ -151,7 +172,7 @@ class OpenHands extends StatelessWidget {
                     height: 24,
                     playable: legal.contains(c.id),
                     dimmed: iThrowIt && !legal.contains(c.id),
-                    onTap: legal.contains(c.id) ? () => onPlay(seat, c) : null,
+                    onTap: legal.contains(c.id) ? () => onPlay(c) : null,
                   ),
               ],
             ),

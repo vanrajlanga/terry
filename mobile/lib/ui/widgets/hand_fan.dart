@@ -6,9 +6,9 @@ import '../../game/cards.dart';
 import '../theme.dart';
 import 'card_view.dart';
 
-/// Your own 37 cards, grouped into one row per suit. The cards size themselves
-/// to the room they are given and overlap just enough that the longest row
-/// fits the width, so the whole hand is always on screen at once.
+/// Your own cards, grouped into one row per suit. They size themselves to the
+/// room they are given and overlap just enough that the longest row fits the
+/// width, so the whole hand is on screen at once.
 class HandFan extends StatelessWidget {
   const HandFan({
     super.key,
@@ -27,8 +27,8 @@ class HandFan extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints box) {
-        final List<Suit> suits = Suit.values
-            .where((Suit s) => cards.any((TerryCard c) => c.suit == s))
+        final List<String> suits = kSuits
+            .where((String s) => cards.any((TerryCard c) => c.suit == s))
             .toList();
         if (suits.isEmpty) return const SizedBox.shrink();
 
@@ -42,7 +42,7 @@ class HandFan extends StatelessWidget {
         final double cardW = cardH * 0.70;
 
         final int longest = suits
-            .map((Suit s) => cards.where((TerryCard c) => c.suit == s).length)
+            .map((String s) => cards.where((TerryCard c) => c.suit == s).length)
             .reduce(max);
         final double avail = box.maxWidth - tagWidth - 4;
         double overlap = 0;
@@ -54,7 +54,6 @@ class HandFan extends StatelessWidget {
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             for (int i = 0; i < suits.length; i++) ...<Widget>[
               if (i > 0) const SizedBox(height: gap),
@@ -67,7 +66,7 @@ class HandFan extends StatelessWidget {
   }
 
   Widget _suitRow(
-    Suit suit,
+    String suit,
     double cardH,
     double cardW,
     double step,
@@ -86,10 +85,10 @@ class HandFan extends StatelessWidget {
           SizedBox(
             width: tagWidth,
             child: Text(
-              suit.symbol,
+              suitSymbol(suit),
               style: TextStyle(
                 fontSize: 13,
-                color: suit.isRed ? Felt.foe : const Color(0xB3EEF5F1),
+                color: suitIsRed(suit) ? Felt.foe : const Color(0xB3EEF5F1),
               ),
             ),
           ),

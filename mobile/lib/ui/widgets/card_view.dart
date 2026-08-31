@@ -29,7 +29,7 @@ class CardView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color ink = card.suit.isRed ? Felt.cardRed : Felt.cardBlack;
+    final Color ink = card.isRed ? Felt.cardRed : Felt.cardBlack;
     final bool compact = height < 46;
     final double cornerSize = compact ? height * 0.30 : height * 0.16;
 
@@ -44,7 +44,8 @@ class CardView extends StatelessWidget {
           width: highlight != null ? 2 : 1,
         ),
         boxShadow: const <BoxShadow>[
-          BoxShadow(color: Color(0x66000000), blurRadius: 3, offset: Offset(0, 2)),
+          BoxShadow(
+              color: Color(0x66000000), blurRadius: 3, offset: Offset(0, 2)),
         ],
       ),
       child: Stack(
@@ -53,7 +54,6 @@ class CardView extends StatelessWidget {
             top: compact ? 1 : 2,
             left: compact ? 2 : 4,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
@@ -66,12 +66,9 @@ class CardView extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  card.suit.symbol,
+                  suitSymbol(card.suit),
                   style: TextStyle(
-                    color: ink,
-                    fontSize: cornerSize * 0.9,
-                    height: 1.0,
-                  ),
+                      color: ink, fontSize: cornerSize * 0.9, height: 1.0),
                 ),
               ],
             ),
@@ -79,7 +76,7 @@ class CardView extends StatelessWidget {
           if (!compact)
             Center(
               child: Text(
-                card.suit.symbol,
+                suitSymbol(card.suit),
                 style: TextStyle(color: ink, fontSize: height * 0.30),
               ),
             ),
@@ -103,9 +100,7 @@ class CardView extends StatelessWidget {
       ),
     );
 
-    if (dimmed) {
-      face = Opacity(opacity: 0.42, child: face);
-    }
+    if (dimmed) face = Opacity(opacity: 0.42, child: face);
     if (onTap != null && playable) {
       face = GestureDetector(onTap: onTap, child: face);
     }
@@ -132,7 +127,7 @@ class MiniCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color ink = card.suit.isRed ? Felt.cardRed : Felt.cardBlack;
+    final Color ink = card.isRed ? Felt.cardRed : Felt.cardBlack;
     Widget chip = Container(
       width: height * 0.74,
       height: height,
@@ -157,7 +152,7 @@ class MiniCard extends StatelessWidget {
             ),
           ),
           Text(
-            card.suit.symbol,
+            suitSymbol(card.suit),
             style: TextStyle(color: ink, fontSize: height * 0.32, height: 1.0),
           ),
         ],

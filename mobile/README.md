@@ -1,90 +1,54 @@
 # Terry by eClipso — Android app
 
-The same game as the web build, as a Flutter app that **plays fully offline against
-bots**. There is no networking code and no network permission: the deck, the bidding,
-the master colour, the bots and the scoring all run on the phone.
+The card game as a Flutter app, with **two ways to play**:
 
-> **Not yet compiled.** This source was written without a Flutter SDK on hand, so it has
-> never been through `flutter analyze`, `flutter test` or `flutter build`. Expect to fix
-> a small number of compile errors on the first run. The rules engine is a line-by-line
-> port of the web version and ships with the same test suite — run `flutter test` first
-> and you will know within a minute whether the engine is sound.
+- **Online** — create or join a room on the Node server that also runs
+  https://terry.eclipso.in, and play with other people. Everything the website does:
+  4 and 6 player tables, bidding, the challenge round, the master colour, open hands,
+  manual throw, giving up, running match scores, bots to fill empty seats, and voice chat.
+- **Offline** — the whole game runs on the phone against bots, with no connection at all.
 
-## Build the APK
+> **Not yet compiled.** Written without a Flutter SDK to hand, so it has never been through
+> `flutter analyze`, `flutter test` or a build. See [HANDOFF.md](HANDOFF.md) — that is the
+> document to give whoever builds the APK.
 
-You need the Flutter SDK (3.10 or newer) and a JDK 17 Android toolchain.
+## Build
 
 ```bash
 cd mobile
-flutter create --platforms=android .
+flutter create --platforms=android .   # generates android/
 flutter pub get
-flutter test
+flutter test                           # the rules, ported from the web suite
 flutter build apk --release
 ```
 
-`flutter create --platforms=android .` generates the `android/` folder (Gradle files,
-manifest, launcher icons). It is deliberately **not** committed — those files are
-generated, machine- and SDK-version specific, and regenerating them is one command.
-It will not overwrite `lib/`, `test/`, `pubspec.yaml` or this README.
+`android/` is generated rather than committed. **You must add the INTERNET, RECORD_AUDIO
+and MODIFY_AUDIO_SETTINGS permissions by hand** — see HANDOFF.md.
 
-The APK lands at `build/app/outputs/flutter-apk/app-release.apk`.
+## How the two modes stay in step
 
-To run on a plugged-in phone while developing:
-
-```bash
-flutter run --release
-```
-
-### Play Store / signing
-
-`flutter build apk --release` signs with a debug key, which is fine for sideloading and
-for testers. For a store build, create an upload keystore and a `key.properties`, then
-follow the standard Flutter signing setup. Both are gitignored — never commit a keystore.
-
-## What is in here
+The server builds a state object for each client in `publicState()`
+(`server/index.js`). Online, the app parses that straight off the socket. Offline,
+`OfflineSession` builds **the same map** from the local engine. One `TableState`, one set
+of screens, so the two modes cannot drift.
 
 ```
-lib/game/cards.dart    the 8-kat, 222-card deck
-lib/game/engine.dart    bidding, master colour, who-takes-the-hand, scoring
-lib/game/bots.dart      bot bidding, colour choice, card play, difficulty
-lib/ui/                 theme, home, table setup, the game table
-test/engine_test.dart   the rules, ported from the web test suite
+lib/game/     pure Dart rules: the kat deck, bidding, colour, challenge, play, bots
+lib/model/    the state shape both modes produce
+lib/net/      online (socket.io) and offline (local room) sessions, and voice (WebRTC)
+lib/ui/       home, lobby, table
+test/         the rules suite
 ```
 
-`lib/game/` has no Flutter imports at all — it is plain Dart, so the engine can be
-tested, reused, or later dropped behind a server without touching the UI.
+`lib/game/` and `lib/model/` import no Flutter at all.
 
-## The rules, in short
+## The rules in short
 
-- 8 kats of 8/9/10/J/Q/K/A in four suits. Kats 1–7 complete, the 8th drops ♠8 and ♣8 —
-  **222 cards, 37 each** to six players.
-- Seats alternate **A1, B1, A2, B2, A3, B3**; three players per team.
-- **Bidding:** you see only your own cards and call how many hands you can take, minimum
-  **19**. Highest caller is the **master**; if all pass it falls to Team A player 1 at 19.
-- The master names the **master colour** (trump) — off his own cards, before anything is
-  revealed. Any master-colour card beats any card that is not, so an 8 of the master
-  colour takes a hand off an Ace when you are void in the suit led.
-- The master's **two team mates then play face up**, and **he throws their cards** for
-  them. Nothing on those seats is played automatically.
-- Follow the lead suit if you hold it. **Equal or higher** takes the hand over — King on
-  King goes on plus.
-- The master's team must reach his call; the other team wins by taking **38 − call**.
+8, 9, 10, J, Q, K, A only, in "kats" — 8 kats six-handed (222 cards, 37 each, minimum call
+19), 4 kats four-handed (112 cards, 28 each, minimum call 15). Highest caller is the master
+and names the master colour; opponents may challenge to double the stakes; the master's
+team mates then play face up and he throws their cards. Follow the lead suit; equal or
+higher takes the hand over; any master-colour card beats a plain one. Made the call `+call`,
+failed `−call×2`, doubled either way if challenged.
 
-## Bot skill
-
-| Level | Bots throw a card they know is wrong |
-|---|---|
-| Hard | never |
-| Medium (default) | ~30% of the time |
-| Easy | ~50% — a forgiving table for learning |
-
-Playing properly, a bot follows suit, takes the hand as cheaply as it can, keeps the
-master colour back while a plain card will do, and **underplays its own partner** rather
-than taking the hand off him.
-
-## Differences from the web build
-
-- Single device, one human (Team A player 1) against five bots. No rooms, no invites.
-- Locked to landscape and full-screen immersive.
-- Your own team's seat panels are hidden; only the opposition is listed, since your hand
-  is along the bottom and the master's team mates are in the open boxes.
+Full detail is in [HANDOFF.md](HANDOFF.md).
