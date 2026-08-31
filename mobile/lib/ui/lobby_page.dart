@@ -54,7 +54,8 @@ class _LobbyPageState extends State<LobbyPage> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(t.text),
-      backgroundColor: t.isError ? const Color(0xFF6D1F1F) : const Color(0xFF123A2B),
+      backgroundColor:
+          t.isError ? const Color(0xFF6D1F1F) : const Color(0xFF123A2B),
       behavior: SnackBarBehavior.floating,
       duration: const Duration(seconds: 3),
     ));
@@ -66,8 +67,8 @@ class _LobbyPageState extends State<LobbyPage> {
     _openedTable = true;
     Navigator.of(context)
         .push(MaterialPageRoute<void>(
-          builder: (_) => TablePage(session: widget.session),
-        ))
+      builder: (_) => TablePage(session: widget.session),
+    ))
         .then((_) {
       if (mounted) setState(() => _openedTable = false);
     });
@@ -125,8 +126,8 @@ class _LobbyPageState extends State<LobbyPage> {
                             const Padding(
                               padding: EdgeInsets.only(right: 8),
                               child: Text('reconnecting…',
-                                  style: TextStyle(
-                                      fontSize: 11, color: Felt.foe)),
+                                  style:
+                                      TextStyle(fontSize: 11, color: Felt.foe)),
                             ),
                           IconButton(
                             icon: const Icon(Icons.close),
@@ -232,70 +233,74 @@ class _LobbyPageState extends State<LobbyPage> {
   Widget _seatRow(TableState s, SeatInfo seat, bool host) {
     final Color accent = seat.team == 'A' ? Felt.teamA : Felt.teamB;
     final bool you = seat.seat == s.you;
+    // The team stripe is a child, not a fatter left BorderSide: Flutter will
+    // not paint a border whose sides differ in colour together with a
+    // borderRadius, and the whole row silently vanishes if you ask it to.
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: const Color(0x40000000),
         borderRadius: BorderRadius.circular(10),
-        border: Border(
-          left: BorderSide(color: accent, width: 3),
-          top: const BorderSide(color: Felt.line),
-          right: const BorderSide(color: Felt.line),
-          bottom: const BorderSide(color: Felt.line),
-        ),
+        border: Border.all(color: Felt.line),
       ),
-      child: Row(
-        children: <Widget>[
-          Icon(
-            seat.filled ? Icons.circle : Icons.circle_outlined,
-            size: 10,
-            color: seat.filled ? Felt.ally : const Color(0x66FFFFFF),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  seat.filled
-                      ? '${seat.name}${seat.isBot ? '  🤖' : ''}'
-                      : 'empty seat',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: seat.filled ? Felt.ink : const Color(0x80EEF5F1),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(width: 3, color: accent),
+            const SizedBox(width: 10),
+            Icon(
+              seat.filled ? Icons.circle : Icons.circle_outlined,
+              size: 10,
+              color: seat.filled ? Felt.ally : const Color(0x66FFFFFF),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    seat.filled
+                        ? '${seat.name}${seat.isBot ? '  🤖' : ''}'
+                        : 'empty seat',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: seat.filled ? Felt.ink : const Color(0x80EEF5F1),
+                    ),
                   ),
-                ),
-                Text(
-                  '${seat.label}${you ? ' · you' : ''}'
-                  '${!seat.isBot && seat.filled && !seat.connected ? ' · offline' : ''}',
-                  style: const TextStyle(
-                      fontSize: 10.5, color: Color(0x99EEF5F1)),
-                ),
-              ],
+                  Text(
+                    '${seat.label}${you ? ' · you' : ''}'
+                    '${!seat.isBot && seat.filled && !seat.connected ? ' · offline' : ''}',
+                    style: const TextStyle(
+                        fontSize: 10.5, color: Color(0x99EEF5F1)),
+                  ),
+                ],
+              ),
             ),
-          ),
-          if (host && seat.isBot)
-            TextButton(
-              onPressed: () => _renameBot(seat),
-              child: const Text('rename'),
-            ),
-          if (host && widget.session.isOnline && seat.filled && !you)
-            TextButton(
-              onPressed: () => widget.session.kick(seat.seat),
-              child: const Text('remove'),
-            ),
-          if (host &&
-              widget.session.isOnline &&
-              seat.filled &&
-              !seat.isBot &&
-              !seat.connected)
-            TextButton(
-              onPressed: () => widget.session.botTakeover(seat.seat),
-              child: const Text('bot'),
-            ),
-        ],
+            if (host && seat.isBot)
+              TextButton(
+                onPressed: () => _renameBot(seat),
+                child: const Text('rename'),
+              ),
+            if (host && widget.session.isOnline && seat.filled && !you)
+              TextButton(
+                onPressed: () => widget.session.kick(seat.seat),
+                child: const Text('remove'),
+              ),
+            if (host &&
+                widget.session.isOnline &&
+                seat.filled &&
+                !seat.isBot &&
+                !seat.connected)
+              TextButton(
+                onPressed: () => widget.session.botTakeover(seat.seat),
+                child: const Text('bot'),
+              ),
+            const SizedBox(width: 10),
+          ],
+        ),
       ),
     );
   }

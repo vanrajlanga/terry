@@ -162,7 +162,9 @@ class GameView {
         yourChallengeTurn = j['yourChallengeTurn'] == true,
         scoreA = _asInt((j['scores'] as Map<String, dynamic>?)?['A']) ?? 0,
         scoreB = _asInt((j['scores'] as Map<String, dynamic>?)?['B']) ?? 0,
-        deals = _asInt(j['deals']) ?? 0,
+        // The server sends one row per finished deal; the screens only ever
+        // need how many there have been.
+        deals = (j['deals'] as List<dynamic>? ?? <dynamic>[]).length,
         concededBy = j['concededBy'] as String?,
         concede = ConcedeInfo.fromJson(
             (j['concede'] as Map<String, dynamic>?)),

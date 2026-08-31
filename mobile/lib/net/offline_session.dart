@@ -19,6 +19,9 @@ const Duration kBotDelay = Duration(milliseconds: 700);
 const Duration kTrickPause = Duration(milliseconds: 1500);
 
 class _Seat {
+  // botKey stays in the state map even though offline never fills it: the
+  // server sends it, so TableState parses it, and the two must match.
+  // ignore: unused_element_parameter
   _Seat(this.name, {required this.isBot, this.botKey});
   String name;
   bool isBot;
@@ -63,7 +66,8 @@ class OfflineSession implements GameSession {
   TerryGame? _game;
   String _phase = 'lobby'; // lobby | playing | finished
   final Map<String, int> _scores = <String, int>{'A': 0, 'B': 0};
-  int _deals = 0;
+  // One row per finished deal, the shape publicState() sends.
+  final List<Map<String, dynamic>> _deals = <Map<String, dynamic>>[];
 
   Timer? _botTimer;
   Timer? _trickTimer;
@@ -297,7 +301,23 @@ class OfflineSession implements GameSession {
     if (points == null) return;
     g.scored = true;
     _scores[points.team] = (_scores[points.team] ?? 0) + points.points;
-    _deals += 1;
+    final int master = g.masterSeat ?? 0;
+    _deals.add(<String, dynamic>{
+      'n': _deals.length + 1,
+      'masterSeat': g.masterSeat,
+      'masterName': master < _seats.length ? _seats[master].name : null,
+      'masterBotKey': master < _seats.length ? _seats[master].botKey : null,
+      'team': points.team,
+      'call': g.target,
+      'trump': g.trump,
+      'challenged': points.challenged,
+      'challengedBy': g.challengedBy,
+      'made': points.made,
+      'took': g.tricks[points.team],
+      'conceded': g.concededBy,
+      'points': points.points,
+      'totals': <String, dynamic>{'A': _scores['A'], 'B': _scores['B']},
+    });
   }
 
   // -------------------------------------------------------------------------

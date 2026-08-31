@@ -115,8 +115,6 @@ class _TablePageState extends State<TablePage> {
     _lastTurnKey = key;
   }
 
-  bool _myMove(TableState s) => _turnKey(s) != null;
-
   // -------------------------------------------------------------------------
 
   @override
@@ -133,8 +131,7 @@ class _TablePageState extends State<TablePage> {
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints box) {
               final bool playing = g.phase == 'playing';
-              final double handHeight =
-                  (playing ? 0.46 : 0.34) * box.maxHeight;
+              final double handHeight = (playing ? 0.46 : 0.34) * box.maxHeight;
               return Column(
                 children: <Widget>[
                   _topBar(s, g),
@@ -222,8 +219,7 @@ class _TablePageState extends State<TablePage> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(mine ? '$team·you' : team,
-              style: const TextStyle(fontSize: 10)),
+          Text(mine ? '$team·you' : team, style: const TextStyle(fontSize: 10)),
           const SizedBox(width: 5),
           Text(
             '${g.tricksFor(team)}',
@@ -241,8 +237,7 @@ class _TablePageState extends State<TablePage> {
             ),
           if (g.deals > 0)
             Text('  ${g.scoreFor(team)}',
-                style: const TextStyle(
-                    fontSize: 10, color: Color(0x99EEF5F1))),
+                style: const TextStyle(fontSize: 10, color: Color(0x99EEF5F1))),
         ],
       ),
     );
@@ -367,48 +362,53 @@ class _TablePageState extends State<TablePage> {
                     : bid == 0
                         ? 'passed'
                         : 'called $bid';
+                // The team stripe is a child, not a fatter left BorderSide: a
+                // border with differing side colours cannot be painted next to
+                // a borderRadius, and the row disappears without a word.
                 return Container(
                   margin: const EdgeInsets.only(bottom: 3),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     color: active
                         ? const Color(0x24F0C15A)
                         : const Color(0x47000000),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border(
-                      left: BorderSide(
-                        color: teamOf(seat) == 'A' ? Felt.teamA : Felt.teamB,
-                        width: 3,
-                      ),
-                      top: BorderSide(color: active ? Felt.gold : Felt.line),
-                      right: BorderSide(color: active ? Felt.gold : Felt.line),
-                      bottom: BorderSide(color: active ? Felt.gold : Felt.line),
-                    ),
+                    border: Border.all(color: active ? Felt.gold : Felt.line),
                   ),
-                  child: Row(
-                    children: <Widget>[
-                      Text(s.nameOf(seat),
-                          style: const TextStyle(
-                              fontSize: 12.5, fontWeight: FontWeight.w700)),
-                      if (seat == s.you)
-                        const Text('  (you)',
-                            style: TextStyle(
-                                fontSize: 11, color: Color(0x99EEF5F1))),
-                      const Spacer(),
-                      Text(
-                        said,
-                        style: TextStyle(
-                          fontSize: bid != null && bid > 0 ? 13 : 11.5,
-                          fontWeight: g.highBidder == seat
-                              ? FontWeight.w800
-                              : FontWeight.w400,
-                          color: g.highBidder == seat
-                              ? Felt.gold
-                              : const Color(0xCCEEF5F1),
+                  // A ListView child is unbounded vertically, so the stretched
+                  // stripe needs an intrinsic height to measure against.
+                  child: IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Container(
+                          width: 3,
+                          color: teamOf(seat) == 'A' ? Felt.teamA : Felt.teamB,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 10),
+                        Text(s.nameOf(seat),
+                            style: const TextStyle(
+                                fontSize: 12.5, fontWeight: FontWeight.w700)),
+                        if (seat == s.you)
+                          const Text('  (you)',
+                              style: TextStyle(
+                                  fontSize: 11, color: Color(0x99EEF5F1))),
+                        const Spacer(),
+                        Text(
+                          said,
+                          style: TextStyle(
+                            fontSize: bid != null && bid > 0 ? 13 : 11.5,
+                            fontWeight: g.highBidder == seat
+                                ? FontWeight.w800
+                                : FontWeight.w400,
+                            color: g.highBidder == seat
+                                ? Felt.gold
+                                : const Color(0xCCEEF5F1),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -542,8 +542,7 @@ class _TablePageState extends State<TablePage> {
                       color: red ? Felt.cardRed : Felt.cardBlack)),
               if (enabled)
                 Text('$own in hand',
-                    style: const TextStyle(
-                        fontSize: 9, color: Colors.black54)),
+                    style: const TextStyle(fontSize: 9, color: Colors.black54)),
             ],
           ),
         ),
@@ -609,9 +608,8 @@ class _TablePageState extends State<TablePage> {
   /// Only the opposition is listed: your hand is right below, and the master's
   /// team mates are in the open boxes.
   Widget _seatStrip(TableState s, GameView g) {
-    final List<SeatInfo> foes = s.seats
-        .where((SeatInfo seat) => s.sideOf(seat.seat) == 'foe')
-        .toList();
+    final List<SeatInfo> foes =
+        s.seats.where((SeatInfo seat) => s.sideOf(seat.seat) == 'foe').toList();
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
@@ -768,8 +766,7 @@ class _TablePageState extends State<TablePage> {
                   style: TextStyle(
                     fontSize: 10,
                     color: iAmMaster ? Felt.gold : const Color(0xB3EEF5F1),
-                    fontWeight:
-                        iAmMaster ? FontWeight.w700 : FontWeight.w400,
+                    fontWeight: iAmMaster ? FontWeight.w700 : FontWeight.w400,
                   ),
                 ),
                 const SizedBox(height: 3),

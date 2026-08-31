@@ -12,7 +12,9 @@ dependencies:
   # talks to the Node server; the server runs socket.io 4.x
   socket_io_client: ^2.0.3+1
   # voice chat, mirroring public/voice.js
-  flutter_webrtc: ^0.11.7
+  # 0.11.x still imports PluginRegistry.Registrar, the v1 Android embedding
+  # that current Flutter has removed, so it cannot compile here.
+  flutter_webrtc: ^1.6.0
   # remembers your name, the server address and the table size
   shared_preferences: ^2.2.3
 
