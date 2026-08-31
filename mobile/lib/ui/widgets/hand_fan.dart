@@ -35,8 +35,10 @@ class HandFan extends StatelessWidget {
         const double gap = 3;
         const double tagWidth = 16;
         final int rows = suits.length;
-        double cardH = (box.maxHeight - gap * (rows - 1)) / rows;
-        cardH = cardH.clamp(20.0, 88.0);
+        // num.clamp() returns num, which will not assign to double - keep it
+        // explicit with min/max instead.
+        final double cardH =
+            min(88.0, max(20.0, (box.maxHeight - gap * (rows - 1)) / rows));
         final double cardW = cardH * 0.70;
 
         final int longest = suits
@@ -74,7 +76,7 @@ class HandFan extends StatelessWidget {
     final List<TerryCard> row =
         cards.where((TerryCard c) => c.suit == suit).toList();
     final double stackWidth =
-        row.isEmpty ? 0 : cardW + step * (row.length - 1);
+        row.isEmpty ? 0.0 : cardW + step * (row.length - 1);
 
     return SizedBox(
       height: cardH,
